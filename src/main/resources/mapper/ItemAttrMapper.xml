@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fy.item.mapper.ItemAttrMapper">
+  <resultMap id="BaseResultMap" type="com.fy.item.domain.ItemAttr">
+    <id column="sttr_id" jdbcType="INTEGER" property="sttrId" />
+    <result column="isku_id" jdbcType="INTEGER" property="iskuId" />
+    <result column="attr_attr_key" jdbcType="VARCHAR" property="attrAttrKey" />
+    <result column="attr_attr_value" jdbcType="VARCHAR" property="attrAttrValue" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    sttr_id,isku_id, attr_attr_key, attr_attr_value
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fy_item_attr
+    where sttr_id = #{sttrId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fy_item_attr
+    where sttr_id = #{sttrId,jdbcType=INTEGER}
+  </delete>
+
+  <insert id="insertSelective" parameterType="com.fy.item.domain.ItemAttr">
+    insert into fy_item_attr
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="sttrId != null">
+        sttr_id,
+      </if>
+      <if test="iskuId != null">
+        isku_id,
+      </if>
+      <if test="attrAttrKey != null">
+        attr_attr_key,
+      </if>
+      <if test="attrAttrValue != null">
+        attr_attr_value,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="sttrId != null">
+        #{sttrId,jdbcType=INTEGER},
+      </if>
+      <if test="iskuId != null">
+        #{iskuId,jdbcType=INTEGER},
+      </if>
+      <if test="attrAttrKey != null">
+        #{attrAttrKey,jdbcType=VARCHAR},
+      </if>
+      <if test="attrAttrValue != null">
+        #{attrAttrValue,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fy.item.domain.ItemAttr">
+    update fy_item_attr
+    <set>
+      <if test="iskuId != null">
+        isku_id = #{iskuId,jdbcType=INTEGER},
+      </if>
+      <if test="attrAttrKey != null">
+        attr_attr_key = #{attrAttrKey,jdbcType=VARCHAR},
+      </if>
+      <if test="attrAttrValue != null">
+        attr_attr_value = #{attrAttrValue,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where sttr_id = #{sttrId,jdbcType=INTEGER}
+  </update>
+
+</mapper>

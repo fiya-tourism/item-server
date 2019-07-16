@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fy.item.mapper.ItemSkuMapper">
+  <resultMap id="BaseResultMap" type="com.fy.item.domain.ItemSku">
+    <id column="isku_id" jdbcType="INTEGER" property="iskuId" />
+    <result column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="isku_sale_price" jdbcType="DOUBLE" property="iskuSalePrice" />
+    <result column="isku_keep_count" jdbcType="INTEGER" property="iskuKeepCount" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    isku_id,item_id, isku_sale_price, isku_keep_count
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fy_item_sku
+    where isku_id = #{iskuId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fy_item_sku
+    where isku_id = #{iskuId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fy.item.domain.ItemSku">
+    insert into fy_item_sku (isku_id,item_id,isku_sale_price,
+      isku_keep_count)
+    values (#{iskuId,jdbcType=INTEGER},(#{itemId,jdbcType=INTEGER},#{iskuSalePrice,jdbcType=DOUBLE},
+      #{iskuKeepCount,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fy.item.domain.ItemSku">
+    insert into fy_item_sku
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="iskuId != null">
+        isku_id,
+      </if>
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="iskuSalePrice != null">
+        isku_sale_price,
+      </if>
+      <if test="iskuKeepCount != null">
+        isku_keep_count,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="iskuId != null">
+        #{iskuId,jdbcType=INTEGER},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="iskuSalePrice != null">
+        #{iskuSalePrice,jdbcType=DOUBLE},
+      </if>
+      <if test="iskuKeepCount != null">
+        #{iskuKeepCount,jdbcType=INTEGER},
+      </if>
+    </trim>
+    <selectKey keyProperty="iskuId" resultType="int" order="AFTER">
+      select last_insert_id()
+    </selectKey>
+  </insert>
+
+  <update id="updateByPrimaryKey" parameterType="com.fy.item.domain.ItemSku">
+    update fy_item_sku
+    set item_id = #{itemId,jdbcType=INTEGER},
+      isku_sale_price = #{iskuSalePrice,jdbcType=DOUBLE},
+      isku_keep_count = #{iskuKeepCount,jdbcType=INTEGER}
+    where isku_id = #{iskuId,jdbcType=INTEGER}
+  </update>
+</mapper>

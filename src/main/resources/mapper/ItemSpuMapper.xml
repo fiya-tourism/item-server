@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fy.item.mapper.ItemSpuMapper">
+  <resultMap id="BaseResultMap" type="com.fy.item.domain.ItemSpu">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="staff_id" jdbcType="INTEGER" property="staffId" />
+    <result column="item_category_id" jdbcType="INTEGER" property="itemCategoryId" />
+    <result column="item_brand_id" jdbcType="INTEGER" property="itemBrandId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_title" jdbcType="VARCHAR" property="itemTitle" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_introduce_id" jdbcType="VARCHAR" property="itemIntroduceId" />
+    <result column="item_is_active" jdbcType="INTEGER" property="itemIsActive" />
+    <result column="item_address" jdbcType="VARCHAR" property="itemAddress" />
+    <result column="item_release" jdbcType="DATE" property="itemRelease" />
+    <result column="item_create" jdbcType="TIMESTAMP" property="itemCreate" />
+    <result column="item_update" jdbcType="TIMESTAMP" property="itemUpdate" />
+    <result column="item_yn" jdbcType="INTEGER" property="itemYn" />
+  </resultMap>
+  <!--大查询-->
+  <resultMap id="SpuSkuAttrMap" type="com.fy.item.domain.ItemSpu">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="staff_id" jdbcType="INTEGER" property="staffId" />
+    <result column="item_category_id" jdbcType="INTEGER" property="itemCategoryId" />
+    <result column="item_brand_id" jdbcType="INTEGER" property="itemBrandId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_title" jdbcType="VARCHAR" property="itemTitle" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_introduce_id" jdbcType="VARCHAR" property="itemIntroduceId" />
+    <result column="item_is_active" jdbcType="INTEGER" property="itemIsActive" />
+    <result column="item_address" jdbcType="VARCHAR" property="itemAddress" />
+    <result column="item_release" jdbcType="DATE" property="itemRelease" />
+    <result column="item_create" jdbcType="TIMESTAMP" property="itemCreate" />
+    <result column="item_update" jdbcType="TIMESTAMP" property="itemUpdate" />
+    <result column="item_yn" jdbcType="INTEGER" property="itemYn" />
+    <collection property="itemSkuList" ofType="itemSku">
+      <id column="isku_id" jdbcType="INTEGER" property="iskuId" />
+      <result column="isku_sale_price" jdbcType="DOUBLE" property="iskuSalePrice" />
+      <result column="isku_keep_count" jdbcType="INTEGER" property="iskuKeepCount" />
+      <collection property="itemAttrList" ofType="itemAttr">
+        <id column="sttr_id" jdbcType="INTEGER" property="sttrId" />
+        <result column="attr_attr_key" jdbcType="VARCHAR" property="attrAttrKey" />
+        <result column="attr_attr_value" jdbcType="VARCHAR" property="attrAttrValue" />
+      </collection>
+    </collection>
+  </resultMap>
+  <sql id="Base_Column_List">
+    item_id, staff_id, item_category_id, item_brand_id, item_name, item_title, item_type, 
+    item_introduce_id, item_is_active, item_address, item_release, item_create, item_update, 
+    item_yn
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from fy_item_spu
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from fy_item_spu
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fy.item.domain.ItemSpu">
+    insert into fy_item_spu (item_id, staff_id, item_category_id, 
+      item_brand_id, item_name, item_title, 
+      item_type, item_introduce_id, item_is_active, 
+      item_address, item_release, item_create, 
+      item_update, item_yn)
+    values (#{itemId,jdbcType=INTEGER}, #{staffId,jdbcType=INTEGER}, #{itemCategoryId,jdbcType=INTEGER}, 
+      #{itemBrandId,jdbcType=INTEGER}, #{itemName,jdbcType=VARCHAR}, #{itemTitle,jdbcType=VARCHAR}, 
+      #{itemType,jdbcType=INTEGER}, #{itemIntroduceId,jdbcType=VARCHAR}, #{itemIsActive,jdbcType=INTEGER}, 
+      #{itemAddress,jdbcType=VARCHAR}, #{itemRelease,jdbcType=DATE}, #{itemCreate,jdbcType=TIMESTAMP}, 
+      #{itemUpdate,jdbcType=TIMESTAMP}, #{itemYn,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="itemAllVo">
+    insert into fy_item_spu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="staffId != null">
+        staff_id,
+      </if>
+      <if test="itemCategoryId != null">
+        item_category_id,
+      </if>
+      <if test="itemBrandId != null">
+        item_brand_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="itemTitle != null">
+        item_title,
+      </if>
+      <if test="itemType != null">
+        item_type,
+      </if>
+      <if test="itemIntroduceId != null">
+        item_introduce_id,
+      </if>
+      <if test="itemIsActive != null">
+        item_is_active,
+      </if>
+      <if test="itemAddress != null">
+        item_address,
+      </if>
+      <if test="itemRelease != null">
+        item_release,
+      </if>
+      <if test="itemCreate != null">
+        item_create,
+      </if>
+      <if test="itemUpdate != null">
+        item_update,
+      </if>
+      <if test="itemYn != null">
+        item_yn,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="itemId != null">
+        #{itemId,jdbcType=INTEGER},
+      </if>
+      <if test="staffId != null">
+        #{staffId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCategoryId != null">
+        #{itemCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="itemBrandId != null">
+        #{itemBrandId,jdbcType=INTEGER},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemTitle != null">
+        #{itemTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        #{itemType,jdbcType=INTEGER},
+      </if>
+      <if test="itemIntroduceId != null">
+        #{itemIntroduceId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemIsActive != null">
+        #{itemIsActive,jdbcType=INTEGER},
+      </if>
+      <if test="itemAddress != null">
+        #{itemAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="itemRelease != null">
+        #{itemRelease,jdbcType=DATE},
+      </if>
+      <if test="itemCreate != null">
+        #{itemCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemUpdate != null">
+        #{itemUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemYn != null">
+        #{itemYn,jdbcType=INTEGER},
+      </if>
+    </trim>
+    <selectKey keyProperty="itemId" resultType="int" order="AFTER">
+      select last_insert_id()
+    </selectKey>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fy.item.domain.ItemSpu">
+    update fy_item_spu
+    <set>
+      <if test="staffId != null">
+        staff_id = #{staffId,jdbcType=INTEGER},
+      </if>
+      <if test="itemCategoryId != null">
+        item_category_id = #{itemCategoryId,jdbcType=INTEGER},
+      </if>
+      <if test="itemBrandId != null">
+        item_brand_id = #{itemBrandId,jdbcType=INTEGER},
+      </if>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemTitle != null">
+        item_title = #{itemTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="itemType != null">
+        item_type = #{itemType,jdbcType=INTEGER},
+      </if>
+      <if test="itemIntroduceId != null">
+        item_introduce_id = #{itemIntroduceId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemIsActive != null">
+        item_is_active = #{itemIsActive,jdbcType=INTEGER},
+      </if>
+      <if test="itemAddress != null">
+        item_address = #{itemAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="itemRelease != null">
+        item_release = #{itemRelease,jdbcType=DATE},
+      </if>
+      <if test="itemCreate != null">
+        item_create = #{itemCreate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemUpdate != null">
+        item_update = #{itemUpdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="itemYn != null">
+        item_yn = #{itemYn,jdbcType=INTEGER},
+      </if>
+    </set>
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fy.item.domain.ItemSpu">
+    update fy_item_spu
+    set staff_id = #{staffId,jdbcType=INTEGER},
+      item_category_id = #{itemCategoryId,jdbcType=INTEGER},
+      item_brand_id = #{itemBrandId,jdbcType=INTEGER},
+      item_name = #{itemName,jdbcType=VARCHAR},
+      item_title = #{itemTitle,jdbcType=VARCHAR},
+      item_type = #{itemType,jdbcType=INTEGER},
+      item_introduce_id = #{itemIntroduceId,jdbcType=VARCHAR},
+      item_is_active = #{itemIsActive,jdbcType=INTEGER},
+      item_address = #{itemAddress,jdbcType=VARCHAR},
+      item_release = #{itemRelease,jdbcType=DATE},
+      item_create = #{itemCreate,jdbcType=TIMESTAMP},
+      item_update = #{itemUpdate,jdbcType=TIMESTAMP},
+      item_yn = #{itemYn,jdbcType=INTEGER}
+    where item_id = #{itemId,jdbcType=INTEGER}
+  </update>
+
+  <!--查看商品列表-->
+  <select id="queryItemList" resultMap="SpuSkuAttrMap">
+    SELECT
+      spu.*,
+      sku.isku_id,sku.isku_sale_price,sku.isku_keep_count,
+      attr.sttr_id,attr.attr_attr_key,attr.attr_attr_value
+    FROM
+      fy_item_spu spu
+    LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
+    LEFT JOIN fy_item_attr attr ON sku.isku_id = attr.isku_id
+
+  </select>
+
+</mapper>
