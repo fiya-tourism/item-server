@@ -10,7 +10,7 @@ import java.util.List;
  * 提供返回前台信息
  */
 @Data
-public class ResultVo<T> implements Serializable {
+public class ResultVo<T> {
     private Integer code;
     private String msg;
     private List<T> list;

@@ -238,6 +238,8 @@
       fy_item_spu spu
     LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
     LEFT JOIN fy_item_attr attr ON sku.isku_id = attr.isku_id
+    WHERE item_yn = 0
+    ORDER BY item_id DESC
 
   </select>
 

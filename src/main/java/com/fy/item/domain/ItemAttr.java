@@ -10,4 +10,20 @@ public class ItemAttr {
     private String attrAttrKey;
     //商品规格属性值
     private String attrAttrValue;
+
+    public ItemAttr() {
+    }
+
+    public ItemAttr(Integer iskuId, String attrAttrKey, String attrAttrValue) {
+        this.iskuId = iskuId;
+        this.attrAttrKey = attrAttrKey;
+        this.attrAttrValue = attrAttrValue;
+    }
+
+    public ItemAttr(Integer sttrId, Integer iskuId, String attrAttrKey, String attrAttrValue) {
+        this.sttrId = sttrId;
+        this.iskuId = iskuId;
+        this.attrAttrKey = attrAttrKey;
+        this.attrAttrValue = attrAttrValue;
+    }
 }

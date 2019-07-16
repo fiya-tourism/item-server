@@ -1,5 +1,7 @@
 package com.fy.item.domain;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +33,8 @@ public class ItemSpu {
     //商品产地
     private String itemAddress;
     //商品发布时间
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date itemRelease;
     //创建时间
     private Date itemCreate;

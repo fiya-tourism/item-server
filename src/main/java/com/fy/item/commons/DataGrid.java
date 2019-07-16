@@ -2,6 +2,7 @@ package com.fy.item.commons;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -15,4 +16,11 @@ public class DataGrid<T> {
 	
 	private List<T> rows;
 
+	public DataGrid() {
+	}
+
+	public DataGrid(Long total, List<T> rows) {
+		this.total = total;
+		this.rows = rows;
+	}
 }

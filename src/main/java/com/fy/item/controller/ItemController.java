@@ -1,5 +1,7 @@
 package com.fy.item.controller;
 
+import com.fy.item.commons.DataGrid;
+import com.fy.item.commons.PageUtil;
 import com.fy.item.commons.ResultVo;
 import com.fy.item.domain.ItemAllVo;
 import com.fy.item.service.ItemService;
@@ -8,7 +10,9 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -31,10 +35,9 @@ public class ItemController {
      */
     @ApiOperation(notes = "查询商品列表",value = "查询商品列表")
     @RequestMapping("queryList")
-    public ResultVo queryItemList(){
-//        log.info("入参条件",);
-        ResultVo resultVo = itemService.queryItemList();
-        return resultVo;
+    public DataGrid queryItemList(@RequestBody PageUtil pageUtil){
+        DataGrid dataGrid = itemService.queryItemList(pageUtil);
+        return dataGrid;
     }
 
     /**
@@ -44,7 +47,8 @@ public class ItemController {
      */
     @ApiOperation(notes="飞亚-发布商品",value = "飞亚-发布商品")
     @RequestMapping("insert")
-    public ResultVo insert(ItemAllVo itemAllVo){
+    public ResultVo insert(@RequestBody ItemAllVo itemAllVo){
+        log.info("入参条件={}",itemAllVo);
         ResultVo resultVo = itemService.insertItem(itemAllVo);
         return resultVo;
     }
