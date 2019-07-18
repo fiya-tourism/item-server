@@ -238,9 +238,33 @@
       fy_item_spu spu
     LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
     LEFT JOIN fy_item_attr attr ON sku.isku_id = attr.isku_id
-    WHERE item_yn = 0
-    ORDER BY item_id DESC
-
+    WHERE spu.item_yn = 0
+    <if test="itemSpuSearchVo.itemType!=null">
+        and spu.item_type = #{itemSpuSearchVo.itemType}
+    </if>
+    <if test="itemSpuSearchVo.itemIsActive!=null">
+        and spu.item_is_active = #{itemSpuSearchVo.itemIsActive}
+    </if>
+    <if test="itemSpuSearchVo.itemAddress!=null and itemSpuSearchVo.itemAddress!=''">
+        and spu.item_address like "%"#{itemSpuSearchVo.itemAddress}"%"
+    </if>
+    <if test="itemSpuSearchVo.timeB!=null and itemSpuSearchVo.timeB!=''">
+        and spu.item_release <![CDATA[>=]]> #{itemSpuSearchVo.timeB}
+    </if>
+    <if test="itemSpuSearchVo.timeE!=null and itemSpuSearchVo.timeE!=''">
+        and spu.item_release <![CDATA[<=]]> #{itemSpuSearchVo.timeE}
+    </if>
+    <if test="sort!=null and sort!=''">
+        order by spu.${sort} ${order}
+    </if>
+    <if test="sort==null or sort==''">
+        order by spu.item_id desc
+    </if>
   </select>
+
+  <!--根据id查询item-->
+  <!--<select id="getItemById" resultMap="">-->
+
+  <!--</select>-->
 
 </mapper>

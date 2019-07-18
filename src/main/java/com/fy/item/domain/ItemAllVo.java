@@ -23,7 +23,7 @@ public class ItemAllVo implements Serializable {
     private String itemName;
     //商品标题 (提供seo优化用)
     private String itemTitle;
-    //商品类型   1.农产品 2.水果 3.工艺品
+    //商品类型   1.农产品 2.水果 3.工艺品 4.副产品
     private Integer itemType;
     //商品介绍 (存放mongodb唯一标识)
     private String itemIntroduceId;
@@ -49,8 +49,10 @@ public class ItemAllVo implements Serializable {
 //商品规格 (Attr)
     //商品规格属性名
     private String attrAttrKey;
+    private String attrAttrKey2;
     //商品规格属性值
     private String attrAttrValue;
+    private String attrAttrValue2;
 //商品图片
     private String picPath;
 

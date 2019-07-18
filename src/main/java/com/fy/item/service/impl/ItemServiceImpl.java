@@ -3,11 +3,14 @@ package com.fy.item.service.impl;
 import com.fy.item.commons.DataGrid;
 import com.fy.item.commons.PageUtil;
 import com.fy.item.commons.ResultVo;
+import com.fy.item.commons.StrTool;
 import com.fy.item.domain.ItemAllVo;
 import com.fy.item.domain.ItemAttr;
+import com.fy.item.domain.ItemComment;
 import com.fy.item.domain.ItemPicture;
 import com.fy.item.domain.ItemSku;
 import com.fy.item.domain.ItemSpu;
+import com.fy.item.domain.ItemSpuSearchVo;
 import com.fy.item.mapper.ItemAttrMapper;
 import com.fy.item.mapper.ItemPictureMapper;
 import com.fy.item.mapper.ItemSkuMapper;
@@ -16,6 +19,7 @@ import com.fy.item.service.ItemService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -45,15 +49,25 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private ItemPictureMapper itemPictureMapper;
 
+    //mongodb工具类
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
     /**
      * 查询商品列表
      * @return
      */
     @Override
-    public DataGrid queryItemList(PageUtil pageUtil) {
+    public DataGrid queryItemList(PageUtil pageUtil,ItemSpuSearchVo itemSpuSearchVo) {
         //准备分页
         PageHelper.startPage(pageUtil.getPage(),pageUtil.getRows());
-        List<ItemSpu> itemSpuList = itemSpuMapper.queryItemList();
+        //驼峰转化为下划线
+        pageUtil.setSort(StrTool.humpToLine2(pageUtil.getSort()));
+        //结束时间格式化
+        if(itemSpuSearchVo!=null&&itemSpuSearchVo.getTimeE()!=null&&!itemSpuSearchVo.getTimeE().equals("")){
+            itemSpuSearchVo.setTimeE(itemSpuSearchVo.getTimeE()+" 23:23:59");
+        }
+        List<ItemSpu> itemSpuList = itemSpuMapper.queryItemList(itemSpuSearchVo,pageUtil.getSort(),pageUtil.getOrder());
         PageInfo<ItemSpu> pageInfo = new PageInfo<ItemSpu>(itemSpuList);
         return new DataGrid(pageInfo.getTotal(),itemSpuList);
     }
@@ -80,6 +94,12 @@ public class ItemServiceImpl implements ItemService {
         itemSpuMapper.insertSelective(itemAllVo);
         //获取刚新增完的商品id
         int itemId = itemAllVo.getItemId();
+        // mongodb内容key
+        itemAllVo.setItemIntroduceId("item"+itemAllVo.getItemId());
+        //创建详情对象
+        ItemComment itemComment = new ItemComment(itemAllVo.getItemIntroduceId(),itemAllVo.getItemIntroduceValue(),new Date());
+        mongoTemplate.save(itemComment);
+
         //判断图片路径是否为空
         if(itemAllVo.getPicPath()!=null&&!itemAllVo.getPicPath().equals("")){
             String[] split = itemAllVo.getPicPath().split(",");
@@ -97,13 +117,20 @@ public class ItemServiceImpl implements ItemService {
         //获取刚新增完的商品详情id
         int itemSkuId = itemSku.getIskuId();
         //判断属性是否为空
-        itemAllVo.setAttrAttrKey(itemAllVo.getAttrAttrKey().replace(" ",""));
-        itemAllVo.setAttrAttrValue(itemAllVo.getAttrAttrValue().replace(" ",""));
         if(itemAllVo.getAttrAttrValue()!=null&&itemAllVo.getAttrAttrKey()!=null&&!itemAllVo.getAttrAttrValue().equals("")&&!itemAllVo.getAttrAttrKey().equals("")){
-            String[] split = itemAllVo.getAttrAttrValue().split(",");
+            String[] split = itemAllVo.getAttrAttrValue().replace(" ","").split(",");
             for(String value:split){
                 //创建attr实体             参数: 详情sku Id         属性名            属性值
                 ItemAttr itemAttr = new ItemAttr(itemSkuId,itemAllVo.getAttrAttrKey(),value);
+                //新增商品属性attr表
+                itemAttrMapper.insertSelective(itemAttr);
+            }
+        }
+        if(itemAllVo.getAttrAttrValue2()!=null&&itemAllVo.getAttrAttrKey2()!=null&&!itemAllVo.getAttrAttrValue2().equals("")&&!itemAllVo.getAttrAttrKey2().equals("")){
+            String[] split = itemAllVo.getAttrAttrValue2().replace(" ","").split(",");
+            for(String value:split){
+                //创建attr实体             参数: 详情sku Id         属性名            属性值
+                ItemAttr itemAttr = new ItemAttr(itemSkuId,itemAllVo.getAttrAttrKey2(),value);
                 //新增商品属性attr表
                 itemAttrMapper.insertSelective(itemAttr);
             }
@@ -112,5 +139,15 @@ public class ItemServiceImpl implements ItemService {
         resultVo.setMsg("新增成功");
 
         return resultVo;
+    }
+
+    /**
+     * 根据id查询
+     * @param itemId
+     * @return
+     */
+    @Override
+    public ItemAllVo getItemById(Integer itemId) {
+        return itemSpuMapper.getItemById(itemId);
     }
 }
