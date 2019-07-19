@@ -19,4 +19,7 @@ public interface ItemService {
 
     ItemReShow getItemById(Integer itemId);
 
+    ResultVo updateItem(ItemAllVo itemAllVo);
+
+    ResultVo deleteItem(Integer itemId);
 }

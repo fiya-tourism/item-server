@@ -25,6 +25,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -72,12 +73,15 @@ public class ItemServiceImpl implements ItemService {
         }
         List<ItemSpu> itemPage = itemSpuMapper.queryPage(itemSpuSearchVo,pageUtil.getSort(),pageUtil.getOrder());
         PageInfo<ItemSpu> pageInfo = new PageInfo<ItemSpu>(itemPage);
-        //将要分页的id拼成一个字符串
-        String ids = "";
-        for(int i=0;i<itemPage.size();i++){
-            ids += itemPage.get(i).getItemId()+",";
+        List<ItemSpu> itemSpuList = new ArrayList<ItemSpu>();
+        if(itemPage.size()!=0){
+            //将要分页的id拼成一个字符串
+            String ids = "";
+            for(int i=0;i<itemPage.size();i++){
+                ids += itemPage.get(i).getItemId()+",";
+            }
+            itemSpuList = itemSpuMapper.queryItemList(ids);
         }
-        List<ItemSpu> itemSpuList = itemSpuMapper.queryItemList(ids);
         return new DataGrid(pageInfo.getTotal(),itemSpuList);
     }
 
@@ -159,7 +163,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemReShow getItemById(Integer itemId) {
         ItemReShow itemReShow = itemSpuMapper.getItemById(itemId);
         //创建 itemComment 对象 用来获取mongodb中的详情
-        Query query = new Query(Criteria.where("key").is("item"+itemId));
+        Query query = new Query(Criteria.where("_id").is("item"+itemId));
         List<ItemComment> itemComments = mongoTemplate.find(query, ItemComment.class);
         if(itemComments.size()!=0){
             ItemComment itemComment = itemComments.get(0);
@@ -172,5 +176,41 @@ public class ItemServiceImpl implements ItemService {
         List<ItemAttr> itemAttrList = itemAttrMapper.queryAttrList(itemReShow.getIskuId());
         itemReShow.setItemAttrList(itemAttrList);
         return itemReShow;
+    }
+
+    /**
+     * 修改
+     * @param itemAllVo
+     * @return
+     */
+    @Override
+    public ResultVo updateItem(ItemAllVo itemAllVo) {
+        ResultVo resultVo = new ResultVo(500,"修改商品出现问题");
+        // 修改时间
+        itemAllVo.setItemUpdate(new Date());
+        //修改商品表
+        itemSpuMapper.updateByPrimaryKeySelective(itemAllVo);
+        //创建详情对象
+        ItemComment itemComment = new ItemComment("item"+itemAllVo.getItemId(),itemAllVo.getItemIntroduceValue(),new Date());
+        //修改mongodb中的详情
+        mongoTemplate.save(itemComment);
+
+        //创建sku实体             参数:     skuId           商品spu Id         销售价格              库存
+        ItemSku itemSku = new ItemSku(itemAllVo.getIskuId(),itemAllVo.getItemId(), itemAllVo.getIskuSalePrice(), itemAllVo.getIskuKeepCount());
+        //修改商品详情表
+        itemSkuMapper.updateByPrimaryKey(itemSku);
+        resultVo.setCode(200);
+        resultVo.setMsg("修改成功");
+        return resultVo;
+    }
+
+    //删除
+    @Override
+    public ResultVo deleteItem(Integer itemId) {
+        ResultVo resultVo = new ResultVo(500,"删除商品出现问题");
+        itemSpuMapper.updateStatus(itemId);
+        resultVo.setCode(200);
+        resultVo.setMsg("删除商品成功");
+        return resultVo;
     }
 }

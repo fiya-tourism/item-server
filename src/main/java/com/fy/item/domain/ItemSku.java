@@ -20,7 +20,16 @@ public class ItemSku {
     public ItemSku() {
     }
 
+    //新增用
     public ItemSku(Integer itemId,Double iskuSalePrice, Integer iskuKeepCount) {
+        this.itemId = itemId;
+        this.iskuSalePrice = iskuSalePrice;
+        this.iskuKeepCount = iskuKeepCount;
+    }
+
+    //修改用
+    public ItemSku(Integer iskuId, Integer itemId, Double iskuSalePrice, Integer iskuKeepCount) {
+        this.iskuId = iskuId;
         this.itemId = itemId;
         this.iskuSalePrice = iskuSalePrice;
         this.iskuKeepCount = iskuKeepCount;

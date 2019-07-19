@@ -5,7 +5,6 @@ import com.fy.item.commons.PageUtil;
 import com.fy.item.commons.ResultVo;
 import com.fy.item.domain.ItemAllVo;
 import com.fy.item.domain.ItemReShow;
-import com.fy.item.domain.ItemSpu;
 import com.fy.item.domain.ItemSpuSearchVo;
 import com.fy.item.service.ItemService;
 import com.google.gson.Gson;
@@ -13,8 +12,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -68,6 +69,30 @@ public class ItemController {
     public ItemReShow getItemById(Integer itemId){
         log.info("入参条件={}",itemId);
         return itemService.getItemById(itemId);
+    }
+
+    /**
+     * 修改item
+     * @param itemAllVo
+     * @return
+     */
+    @RequestMapping("update")
+    public ResultVo updateItem(@RequestBody ItemAllVo itemAllVo){
+        log.info("入参={}",itemAllVo);
+        ResultVo resultVo = itemService.updateItem(itemAllVo);
+        return resultVo;
+    }
+
+    /**
+     * 删除item
+     * @param itemId
+     * @return
+     */
+    @DeleteMapping("delete")
+    public ResultVo deleteItem(@RequestParam Integer itemId){
+        log.info("入参={}",itemId);
+        ResultVo resultVo = itemService.deleteItem(itemId);
+        return resultVo;
     }
 
 }

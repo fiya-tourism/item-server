@@ -18,7 +18,7 @@ public interface ItemSpuMapper {
 
     ItemSpu selectByPrimaryKey(Integer itemId);
 
-    int updateByPrimaryKeySelective(ItemSpu record);
+    int updateByPrimaryKeySelective(ItemAllVo itemAllVo);
 
     int updateByPrimaryKey(ItemSpu record);
 
@@ -33,4 +33,7 @@ public interface ItemSpuMapper {
                             @Param("order") String order);
     //查询
     List<ItemSpu> queryItemList(@Param("ids") String ids);
+
+    //逻辑删除
+    void updateStatus(Integer itemId);
 }

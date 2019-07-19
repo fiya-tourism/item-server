@@ -42,6 +42,8 @@ public class ItemAllVo implements Serializable {
     //状态码   0.显示   1.隐藏
     private Integer itemYn;
 //商品详情 (sku)
+    //商品详情主键
+    private Integer iskuId;
     //商品销售价格
     private Double iskuSalePrice;
     //商品库存

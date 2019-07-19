@@ -166,7 +166,7 @@
       select last_insert_id()
     </selectKey>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.fy.item.domain.ItemSpu">
+  <update id="updateByPrimaryKeySelective" parameterType="itemAllVo">
     update fy_item_spu
     <set>
       <if test="staffId != null">
@@ -295,11 +295,25 @@
   <!--根据id查询item-->
   <select id="getItemById" resultType="itemReShow">
     SELECT
-      spu.*,sku.isku_id,sku.isku_sale_price
+      spu.*,
+      sku.isku_id as iskuId,
+      sku.isku_sale_price as iskuSalePrice
     FROM
       fy_item_spu spu
     LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
     WHERE spu.item_id = #{itemId}
   </select>
+
+  <!--删除-->
+  <update id="updateStatus" parameterType="int">
+    UPDATE
+      fy_item_spu
+    SET
+      item_yn = 1
+    WHERE
+      item_id = #{itemId}
+
+
+  </update>
 
 </mapper>
