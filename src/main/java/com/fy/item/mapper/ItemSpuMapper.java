@@ -1,6 +1,7 @@
 package com.fy.item.mapper;
 
 import com.fy.item.domain.ItemAllVo;
+import com.fy.item.domain.ItemReShow;
 import com.fy.item.domain.ItemSpu;
 import com.fy.item.domain.ItemSpuSearchVo;
 import org.apache.ibatis.annotations.Param;
@@ -21,10 +22,15 @@ public interface ItemSpuMapper {
 
     int updateByPrimaryKey(ItemSpu record);
 
-    List<ItemSpu> queryItemList(@Param("itemSpuSearchVo") ItemSpuSearchVo itemSpuSearchVo,
-                                @Param("sort") String sort,
-                                @Param("order") String order);
 
     //根据id查询item
-    ItemAllVo getItemById(Integer itemId);
+    ItemReShow getItemById(Integer itemId);
+
+//查询列表
+    //获取真正分页的itemSpuId
+    List<ItemSpu> queryPage(@Param("itemSpuSearchVo") ItemSpuSearchVo itemSpuSearchVo,
+                            @Param("sort") String sort,
+                            @Param("order") String order);
+    //查询
+    List<ItemSpu> queryItemList(@Param("ids") String ids);
 }

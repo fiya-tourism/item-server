@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fy.item.mapper.ItemSpuMapper">
+  <!--条件查询的条件-->
+  <sql id="search">
+    <if test="itemSpuSearchVo.itemType!=null">
+      and spu.item_type = #{itemSpuSearchVo.itemType}
+    </if>
+    <if test="itemSpuSearchVo.itemIsActive!=null">
+      and spu.item_is_active = #{itemSpuSearchVo.itemIsActive}
+    </if>
+    <if test="itemSpuSearchVo.itemAddress!=null and itemSpuSearchVo.itemAddress!=''">
+      and spu.item_address like "%"#{itemSpuSearchVo.itemAddress}"%"
+    </if>
+    <if test="itemSpuSearchVo.timeB!=null and itemSpuSearchVo.timeB!=''">
+      and spu.item_release <![CDATA[>=]]> #{itemSpuSearchVo.timeB}
+    </if>
+    <if test="itemSpuSearchVo.timeE!=null and itemSpuSearchVo.timeE!=''">
+      and spu.item_release <![CDATA[<=]]> #{itemSpuSearchVo.timeE}
+    </if>
+    <if test="sort!=null and sort!=''">
+      order by spu.${sort} ${order}
+    </if>
+    <if test="sort==null or sort==''">
+      order by spu.item_id desc
+    </if>
+  </sql>
+
+  <sql id="Base_Column_List">
+    item_id, staff_id, item_category_id, item_brand_id, item_name, item_title, item_type,
+    item_introduce_id, item_is_active, item_address, item_release, item_create, item_update,
+    item_yn
+  </sql>
+
   <resultMap id="BaseResultMap" type="com.fy.item.domain.ItemSpu">
     <id column="item_id" jdbcType="INTEGER" property="itemId" />
     <result column="staff_id" jdbcType="INTEGER" property="staffId" />
@@ -17,38 +48,8 @@
     <result column="item_update" jdbcType="TIMESTAMP" property="itemUpdate" />
     <result column="item_yn" jdbcType="INTEGER" property="itemYn" />
   </resultMap>
-  <!--大查询-->
-  <resultMap id="SpuSkuAttrMap" type="com.fy.item.domain.ItemSpu">
-    <id column="item_id" jdbcType="INTEGER" property="itemId" />
-    <result column="staff_id" jdbcType="INTEGER" property="staffId" />
-    <result column="item_category_id" jdbcType="INTEGER" property="itemCategoryId" />
-    <result column="item_brand_id" jdbcType="INTEGER" property="itemBrandId" />
-    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
-    <result column="item_title" jdbcType="VARCHAR" property="itemTitle" />
-    <result column="item_type" jdbcType="INTEGER" property="itemType" />
-    <result column="item_introduce_id" jdbcType="VARCHAR" property="itemIntroduceId" />
-    <result column="item_is_active" jdbcType="INTEGER" property="itemIsActive" />
-    <result column="item_address" jdbcType="VARCHAR" property="itemAddress" />
-    <result column="item_release" jdbcType="DATE" property="itemRelease" />
-    <result column="item_create" jdbcType="TIMESTAMP" property="itemCreate" />
-    <result column="item_update" jdbcType="TIMESTAMP" property="itemUpdate" />
-    <result column="item_yn" jdbcType="INTEGER" property="itemYn" />
-    <collection property="itemSkuList" ofType="itemSku">
-      <id column="isku_id" jdbcType="INTEGER" property="iskuId" />
-      <result column="isku_sale_price" jdbcType="DOUBLE" property="iskuSalePrice" />
-      <result column="isku_keep_count" jdbcType="INTEGER" property="iskuKeepCount" />
-      <collection property="itemAttrList" ofType="itemAttr">
-        <id column="sttr_id" jdbcType="INTEGER" property="sttrId" />
-        <result column="attr_attr_key" jdbcType="VARCHAR" property="attrAttrKey" />
-        <result column="attr_attr_value" jdbcType="VARCHAR" property="attrAttrValue" />
-      </collection>
-    </collection>
-  </resultMap>
-  <sql id="Base_Column_List">
-    item_id, staff_id, item_category_id, item_brand_id, item_name, item_title, item_type, 
-    item_introduce_id, item_is_active, item_address, item_release, item_create, item_update, 
-    item_yn
-  </sql>
+
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
@@ -228,43 +229,77 @@
     where item_id = #{itemId,jdbcType=INTEGER}
   </update>
 
-  <!--查看商品列表-->
-  <select id="queryItemList" resultMap="SpuSkuAttrMap">
-    SELECT
-      spu.*,
-      sku.isku_id,sku.isku_sale_price,sku.isku_keep_count,
-      attr.sttr_id,attr.attr_attr_key,attr.attr_attr_value
+  <!--大查询-->
+  <resultMap id="SpuSkuAttrMap" type="com.fy.item.domain.ItemSpu">
+    <id column="item_id" jdbcType="INTEGER" property="itemId" />
+    <result column="staff_id" jdbcType="INTEGER" property="staffId" />
+    <result column="item_category_id" jdbcType="INTEGER" property="itemCategoryId" />
+    <result column="item_brand_id" jdbcType="INTEGER" property="itemBrandId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_title" jdbcType="VARCHAR" property="itemTitle" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_introduce_id" jdbcType="VARCHAR" property="itemIntroduceId" />
+    <result column="item_is_active" jdbcType="INTEGER" property="itemIsActive" />
+    <result column="item_address" jdbcType="VARCHAR" property="itemAddress" />
+    <result column="item_release" jdbcType="DATE" property="itemRelease" />
+    <result column="item_create" jdbcType="TIMESTAMP" property="itemCreate" />
+    <result column="item_update" jdbcType="TIMESTAMP" property="itemUpdate" />
+    <result column="item_yn" jdbcType="INTEGER" property="itemYn" />
+    <result column="picture_url" jdbcType="VARCHAR" property="pictureUrl" />
+    <collection property="itemSkuList" ofType="itemSku">
+      <id column="isku_id" jdbcType="INTEGER" property="iskuId" />
+      <result column="isku_sale_price" jdbcType="DOUBLE" property="iskuSalePrice" />
+      <result column="isku_keep_count" jdbcType="INTEGER" property="iskuKeepCount" />
+      <collection property="itemAttrList" ofType="itemAttr">
+        <id column="sttr_id" jdbcType="INTEGER" property="sttrId" />
+        <result column="attr_attr_key" jdbcType="VARCHAR" property="attrAttrKey" />
+        <result column="attr_attr_value" jdbcType="VARCHAR" property="attrAttrValue" />
+      </collection>
+    </collection>
+  </resultMap>
+  <!--查询真正要分页的商品id-->
+  <select id="queryPage" resultMap="SpuSkuAttrMap">
+    SELECT DISTINCT
+      spu.item_id
     FROM
       fy_item_spu spu
     LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
     LEFT JOIN fy_item_attr attr ON sku.isku_id = attr.isku_id
-    WHERE spu.item_yn = 0
-    <if test="itemSpuSearchVo.itemType!=null">
-        and spu.item_type = #{itemSpuSearchVo.itemType}
-    </if>
-    <if test="itemSpuSearchVo.itemIsActive!=null">
-        and spu.item_is_active = #{itemSpuSearchVo.itemIsActive}
-    </if>
-    <if test="itemSpuSearchVo.itemAddress!=null and itemSpuSearchVo.itemAddress!=''">
-        and spu.item_address like "%"#{itemSpuSearchVo.itemAddress}"%"
-    </if>
-    <if test="itemSpuSearchVo.timeB!=null and itemSpuSearchVo.timeB!=''">
-        and spu.item_release <![CDATA[>=]]> #{itemSpuSearchVo.timeB}
-    </if>
-    <if test="itemSpuSearchVo.timeE!=null and itemSpuSearchVo.timeE!=''">
-        and spu.item_release <![CDATA[<=]]> #{itemSpuSearchVo.timeE}
-    </if>
-    <if test="sort!=null and sort!=''">
-        order by spu.${sort} ${order}
-    </if>
-    <if test="sort==null or sort==''">
-        order by spu.item_id desc
-    </if>
+    LEFT JOIN fy_item_picture pic ON spu.item_id = pic.item_id
+    WHERE spu.item_yn = 0 AND pic.picture_sequence = 0
+    <include refid="search"/>
+  </select>
+  <!--查看商品列表-->
+  <select id="queryItemList" resultMap="SpuSkuAttrMap" parameterType="string">
+    SELECT
+      spu.*,
+      sku.isku_id,sku.isku_sale_price,sku.isku_keep_count,
+      attr.sttr_id,attr.attr_attr_key,attr.attr_attr_value,
+      pic.picture_url
+    FROM
+    fy_item_spu spu
+    LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
+    LEFT JOIN fy_item_attr attr ON sku.isku_id = attr.isku_id
+    LEFT JOIN fy_item_picture pic ON spu.item_id = pic.item_id
+    <where>
+      <if test="ids != null and ids != ''">
+        <foreach collection="ids.split(',')" item="id" open=" spu.item_id in (" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+    </where>
+    order by spu.item_id desc
   </select>
 
-  <!--根据id查询item-->
-  <!--<select id="getItemById" resultMap="">-->
 
-  <!--</select>-->
+  <!--根据id查询item-->
+  <select id="getItemById" resultType="itemReShow">
+    SELECT
+      spu.*,sku.isku_id,sku.isku_sale_price
+    FROM
+      fy_item_spu spu
+    LEFT JOIN fy_item_sku sku ON spu.item_id = sku.item_id
+    WHERE spu.item_id = #{itemId}
+  </select>
 
 </mapper>

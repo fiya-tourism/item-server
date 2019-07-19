@@ -2,6 +2,8 @@ package com.fy.item.mapper;
 
 import com.fy.item.domain.ItemPicture;
 
+import java.util.List;
+
 public interface ItemPictureMapper {
     int deleteByPrimaryKey(Integer pictureId);
 
@@ -14,4 +16,6 @@ public interface ItemPictureMapper {
     int updateByPrimaryKeySelective(ItemPicture record);
 
     int updateByPrimaryKey(ItemPicture record);
+
+    List<ItemPicture> queryPicList(Integer itemId);
 }

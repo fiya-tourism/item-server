@@ -115,4 +115,15 @@
         picture_yn = #{pictureYn,jdbcType=INTEGER}
         where picture_id = #{pictureId,jdbcType=INTEGER}
     </update>
+
+    <!--根据商品id查图片-->
+    <select id="queryPicList" resultType="itemPicture">
+        select
+          <include refid="Base_Column_List"/>
+        from
+          fy_item_picture
+        where
+          item_id = #{itemId}
+    </select>
+
 </mapper>

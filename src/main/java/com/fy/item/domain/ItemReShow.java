@@ -1,4 +1,5 @@
 package com.fy.item.domain;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -7,11 +8,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author monst
- * 飞亚-商品spu
+ * 商品详情
+ * Created by monst on 2019/7/18.
  */
 @Data
-public class ItemSpu {
+public class ItemReShow {
     //商品主键
     private Integer itemId;
     //员工主键
@@ -42,20 +43,16 @@ public class ItemSpu {
     private Date itemUpdate;
     //状态码   0.显示   1.隐藏
     private Integer itemYn;
-    //商品详情集合 (sku)
-    private List<ItemSku> itemSkuList;
-    //首图路径
-    private String pictureUrl;
-
-    public ItemSpu() {
-    }
-
-    //新增所需参数
-    public ItemSpu(Integer staffId, Integer itemIsActive, Date itemRelease, Date itemCreate, Integer itemYn) {
-        this.staffId = staffId;
-        this.itemIsActive = itemIsActive;
-        this.itemRelease = itemRelease;
-        this.itemCreate = itemCreate;
-        this.itemYn = itemYn;
-    }
+    //商品详情主键
+    private Integer iskuId;
+    //商品销售价格
+    private Double iskuSalePrice;
+    //商品库存   --预留
+    private Integer iskuKeepCount;
+    //商品规格集合
+    private List<ItemAttr> itemAttrList;
+    //图片集合
+    private List<ItemPicture> itemPictureList;
+    //商品介绍 (真正内容)
+    private String itemIntroduceValue;
 }

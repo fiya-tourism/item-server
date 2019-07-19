@@ -68,4 +68,14 @@
     where sttr_id = #{sttrId,jdbcType=INTEGER}
   </update>
 
+  <!--根据sku Id查询attr-->
+  <select id="queryAttrList" resultType="itemAttr">
+    SELECT 
+      <include refid="Base_Column_List"/>
+    FROM
+      fy_item_attr
+    WHERE
+      isku_id = #{iskuId}
+  </select>
+
 </mapper>

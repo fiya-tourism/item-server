@@ -2,6 +2,8 @@ package com.fy.item.mapper;
 
 import com.fy.item.domain.ItemAttr;
 
+import java.util.List;
+
 public interface ItemAttrMapper {
     int deleteByPrimaryKey(Integer sttrId);
 
@@ -14,4 +16,6 @@ public interface ItemAttrMapper {
     int updateByPrimaryKeySelective(ItemAttr record);
 
     int updateByPrimaryKey(ItemAttr record);
+
+    List<ItemAttr> queryAttrList(Integer iskuId);
 }

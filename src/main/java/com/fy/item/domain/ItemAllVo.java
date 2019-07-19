@@ -54,7 +54,7 @@ public class ItemAllVo implements Serializable {
     private String attrAttrValue;
     private String attrAttrValue2;
 //商品图片
-    private String picPath;
+    private String pictureUrl;
 
 
 

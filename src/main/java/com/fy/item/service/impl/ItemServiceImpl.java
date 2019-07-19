@@ -11,6 +11,7 @@ import com.fy.item.domain.ItemPicture;
 import com.fy.item.domain.ItemSku;
 import com.fy.item.domain.ItemSpu;
 import com.fy.item.domain.ItemSpuSearchVo;
+import com.fy.item.domain.ItemReShow;
 import com.fy.item.mapper.ItemAttrMapper;
 import com.fy.item.mapper.ItemPictureMapper;
 import com.fy.item.mapper.ItemSkuMapper;
@@ -20,6 +21,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -67,8 +70,14 @@ public class ItemServiceImpl implements ItemService {
         if(itemSpuSearchVo!=null&&itemSpuSearchVo.getTimeE()!=null&&!itemSpuSearchVo.getTimeE().equals("")){
             itemSpuSearchVo.setTimeE(itemSpuSearchVo.getTimeE()+" 23:23:59");
         }
-        List<ItemSpu> itemSpuList = itemSpuMapper.queryItemList(itemSpuSearchVo,pageUtil.getSort(),pageUtil.getOrder());
-        PageInfo<ItemSpu> pageInfo = new PageInfo<ItemSpu>(itemSpuList);
+        List<ItemSpu> itemPage = itemSpuMapper.queryPage(itemSpuSearchVo,pageUtil.getSort(),pageUtil.getOrder());
+        PageInfo<ItemSpu> pageInfo = new PageInfo<ItemSpu>(itemPage);
+        //将要分页的id拼成一个字符串
+        String ids = "";
+        for(int i=0;i<itemPage.size();i++){
+            ids += itemPage.get(i).getItemId()+",";
+        }
+        List<ItemSpu> itemSpuList = itemSpuMapper.queryItemList(ids);
         return new DataGrid(pageInfo.getTotal(),itemSpuList);
     }
 
@@ -101,8 +110,8 @@ public class ItemServiceImpl implements ItemService {
         mongoTemplate.save(itemComment);
 
         //判断图片路径是否为空
-        if(itemAllVo.getPicPath()!=null&&!itemAllVo.getPicPath().equals("")){
-            String[] split = itemAllVo.getPicPath().split(",");
+        if(itemAllVo.getPictureUrl()!=null&&!itemAllVo.getPictureUrl().equals("")){
+            String[] split = itemAllVo.getPictureUrl().split(",");
             for(int i=0;i<split.length;i++){
                 //创建图片实体   (商品Id,路径,次序,创建时间,状态)
                 ItemPicture itemPicture = new ItemPicture(itemId,split[i],i,new Date(),0);
@@ -147,7 +156,21 @@ public class ItemServiceImpl implements ItemService {
      * @return
      */
     @Override
-    public ItemAllVo getItemById(Integer itemId) {
-        return itemSpuMapper.getItemById(itemId);
+    public ItemReShow getItemById(Integer itemId) {
+        ItemReShow itemReShow = itemSpuMapper.getItemById(itemId);
+        //创建 itemComment 对象 用来获取mongodb中的详情
+        Query query = new Query(Criteria.where("key").is("item"+itemId));
+        List<ItemComment> itemComments = mongoTemplate.find(query, ItemComment.class);
+        if(itemComments.size()!=0){
+            ItemComment itemComment = itemComments.get(0);
+            itemReShow.setItemIntroduceValue(itemComment.getValue());
+        }
+        //查询该商品的图片集合
+        List<ItemPicture> itemPictureList = itemPictureMapper.queryPicList(itemId);
+        itemReShow.setItemPictureList(itemPictureList);
+        //根据sku Id查询该商品的attr集合
+        List<ItemAttr> itemAttrList = itemAttrMapper.queryAttrList(itemReShow.getIskuId());
+        itemReShow.setItemAttrList(itemAttrList);
+        return itemReShow;
     }
 }

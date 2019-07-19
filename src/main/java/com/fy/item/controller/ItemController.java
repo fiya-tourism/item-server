@@ -4,6 +4,8 @@ import com.fy.item.commons.DataGrid;
 import com.fy.item.commons.PageUtil;
 import com.fy.item.commons.ResultVo;
 import com.fy.item.domain.ItemAllVo;
+import com.fy.item.domain.ItemReShow;
+import com.fy.item.domain.ItemSpu;
 import com.fy.item.domain.ItemSpuSearchVo;
 import com.fy.item.service.ItemService;
 import com.google.gson.Gson;
@@ -63,7 +65,8 @@ public class ItemController {
      * @return
      */
     @RequestMapping("getItemById")
-    public ItemAllVo getItemById(Integer itemId){
+    public ItemReShow getItemById(Integer itemId){
+        log.info("入参条件={}",itemId);
         return itemService.getItemById(itemId);
     }
 
