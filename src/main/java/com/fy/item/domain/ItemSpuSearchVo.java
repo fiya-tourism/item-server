@@ -19,5 +19,7 @@ public class ItemSpuSearchVo {
     private String timeB;
     //结束的时间
     private String timeE;
+    //员工主键
+    private Integer staffId;
 
 }

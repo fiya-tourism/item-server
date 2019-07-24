@@ -18,6 +18,9 @@
     <if test="itemSpuSearchVo.timeE!=null and itemSpuSearchVo.timeE!=''">
       and spu.item_release <![CDATA[<=]]> #{itemSpuSearchVo.timeE}
     </if>
+    <if test="itemSpuSearchVo.staffId!=null">
+      and spu.staff_id = #{itemSpuSearchVo.staffId}
+    </if>
     <if test="sort!=null and sort!=''">
       order by spu.${sort} ${order}
     </if>

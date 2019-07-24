@@ -2,6 +2,7 @@ package com.fy.item.service.impl;
 
 import com.fy.item.commons.DataGrid;
 import com.fy.item.commons.PageUtil;
+import com.fy.item.commons.RedisUtil;
 import com.fy.item.commons.ResultVo;
 import com.fy.item.commons.StrTool;
 import com.fy.item.domain.ItemAllVo;
@@ -12,6 +13,7 @@ import com.fy.item.domain.ItemSku;
 import com.fy.item.domain.ItemSpu;
 import com.fy.item.domain.ItemSpuSearchVo;
 import com.fy.item.domain.ItemReShow;
+import com.fy.staff.domain.Staff;
 import com.fy.item.mapper.ItemAttrMapper;
 import com.fy.item.mapper.ItemPictureMapper;
 import com.fy.item.mapper.ItemSkuMapper;
@@ -57,6 +59,11 @@ public class ItemServiceImpl implements ItemService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    //redis工具类
+    @Autowired
+    private RedisUtil redisUtil;
+
+
     /**
      * 查询商品列表
      * @return
@@ -71,6 +78,8 @@ public class ItemServiceImpl implements ItemService {
         if(itemSpuSearchVo!=null&&itemSpuSearchVo.getTimeE()!=null&&!itemSpuSearchVo.getTimeE().equals("")){
             itemSpuSearchVo.setTimeE(itemSpuSearchVo.getTimeE()+" 23:23:59");
         }
+        Staff staff = (Staff) redisUtil.get("staff");
+        itemSpuSearchVo.setStaffId(staff.getStaffId());
         List<ItemSpu> itemPage = itemSpuMapper.queryPage(itemSpuSearchVo,pageUtil.getSort(),pageUtil.getOrder());
         PageInfo<ItemSpu> pageInfo = new PageInfo<ItemSpu>(itemPage);
         List<ItemSpu> itemSpuList = new ArrayList<ItemSpu>();
@@ -94,7 +103,12 @@ public class ItemServiceImpl implements ItemService {
     public ResultVo insertItem(ItemAllVo itemAllVo) {
         ResultVo resultVo = new ResultVo(500,"发布商品出现问题");
         //员工id-缓存中获取---------------------------
-        itemAllVo.setStaffId(1);
+        Staff staff = (Staff) redisUtil.get("staff");
+        if(staff!=null){
+            itemAllVo.setStaffId(staff.getStaffId());
+        }else{
+            itemAllVo.setStaffId(1);
+        }
         //是否上架 1.未上架  需手动点击后才让上架
         itemAllVo.setItemIsActive(1);
         // 发布时间
@@ -122,6 +136,11 @@ public class ItemServiceImpl implements ItemService {
                 //新增图片
                 itemPictureMapper.insertSelective(itemPicture);
             }
+        }else{
+            //创建图片实体   (商品Id,路径,次序,创建时间,状态)
+            ItemPicture itemPicture = new ItemPicture(itemId,null,0,new Date(),0);
+            //新增图片
+            itemPictureMapper.insertSelective(itemPicture);
         }
         //创建sku实体             参数: 商品spu Id         销售价格              库存
         ItemSku itemSku = new ItemSku(itemId, itemAllVo.getIskuSalePrice(), itemAllVo.getIskuKeepCount());
